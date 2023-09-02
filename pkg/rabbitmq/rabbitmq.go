@@ -1,6 +1,9 @@
 package rabbitmq
 
-import amqp "github.com/rabbitmq/amqp091-go"
+import (
+	"context"
+	amqp "github.com/rabbitmq/amqp091-go"
+)
 
 func OpenChannel() (*amqp.Channel, error) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
@@ -17,7 +20,7 @@ func OpenChannel() (*amqp.Channel, error) {
 
 func Consume(ch *amqp.Channel, out chan<- amqp.Delivery) error {
 	msgs, err := ch.Consume(
-		"minhafila",
+		"orders",
 		"go-consumer",
 		false,
 		false,
@@ -30,6 +33,25 @@ func Consume(ch *amqp.Channel, out chan<- amqp.Delivery) error {
 	}
 	for msg := range msgs {
 		out <- msg
+	}
+
+	return nil
+}
+
+func Publish(ctx context.Context, ch *amqp.Channel, msg []byte) error {
+	err := ch.PublishWithContext(
+		ctx,
+		"amq.direct",
+		"",
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        msg,
+		},
+	)
+	if err != nil {
+		return err
 	}
 
 	return nil
