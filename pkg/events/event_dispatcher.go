@@ -11,7 +11,7 @@ type EventDispatcher struct {
 	handlers map[string][]EventHandlerInterface
 }
 
-func NewEventDispatcher() *EventDispatcher {
+func NewEventDispatcher() EventDispatcherInterface {
 	return &EventDispatcher{
 		handlers: make(map[string][]EventHandlerInterface),
 	}
@@ -56,7 +56,7 @@ func (ed *EventDispatcher) Has(eventName string, handler EventHandlerInterface) 
 	return false
 }
 
-func (ed *EventDispatcher) Remove(name string, handler EventHandlerInterface) {
+func (ed *EventDispatcher) Remove(name string, handler EventHandlerInterface) error {
 	if _, ok := ed.handlers[name]; ok {
 		for i, h := range ed.handlers[name] {
 			if h == handler {
@@ -64,8 +64,10 @@ func (ed *EventDispatcher) Remove(name string, handler EventHandlerInterface) {
 			}
 		}
 	}
+	return nil
 }
 
-func (ed *EventDispatcher) Clear() {
+func (ed *EventDispatcher) Clear() error {
 	ed.handlers = make(map[string][]EventHandlerInterface)
+	return nil
 }
