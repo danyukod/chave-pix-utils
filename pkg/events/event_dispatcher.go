@@ -11,7 +11,7 @@ type EventDispatcher struct {
 	handlers map[string][]EventHandlerInterface
 }
 
-func NewEventDispatcher() EventDispatcherInterface {
+func NewEventDispatcher() *EventDispatcher {
 	return &EventDispatcher{
 		handlers: make(map[string][]EventHandlerInterface),
 	}
