@@ -16,7 +16,16 @@ type UowInterface interface {
 	UnRegister(name string)
 }
 
+func NewUow(ctx context.Context, db *sql.DB) *Uow {
+	return &Uow{
+		ctx:          ctx,
+		Db:           db,
+		repositories: make(map[string]RepositoryFactory),
+	}
+}
+
 type Uow struct {
+	ctx          context.Context
 	Db           *sql.DB
 	Tx           *sql.Tx
 	repositories map[string]RepositoryFactory
